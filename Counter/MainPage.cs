@@ -5,18 +5,15 @@ using Uno.Extensions.Markup;
 using Uno.Material;
 using Uno.Themes.Markup;
 using Uno.Toolkit.UI;
-using Windows.ApplicationModel.Resources;
 
 namespace Counter;
 
 public sealed partial class MainPage : Page
 {
-    private readonly ResourceLoader _resourceLoader;
     private readonly ILanguageService _languageService;
 
     public MainPage()
     {
-        _resourceLoader = ResourceLoader.GetForViewIndependentUse();
         _languageService = new LanguageService();
 
         this.DataContext(
@@ -34,14 +31,14 @@ public sealed partial class MainPage : Page
                                     .Orientation(Orientation.Vertical)
                                     .Children(
                                         new TextBlock()
-                                            .Text(_resourceLoader.GetString("common_app_title"))
+                                            .Text(x => x.Binding(() => vm.AppTitle))
                                             .HorizontalAlignment(HorizontalAlignment.Center)
                                             .FontSize(48)
                                             .FontWeight(FontWeights.Bold)
                                             .Margin(0, 32, 0, 32),
-                                        LanguageSwitcher(),
+                                        LanguageSwitcher(vm),
                                         new TextBlock()
-                                            .Text(_resourceLoader.GetString("step_settings"))
+                                            .Text(x => x.Binding(() => vm.StepSettingsLabel))
                                             .HorizontalAlignment(HorizontalAlignment.Center)
                                             .FontSize(32),
                                         new StackPanel()
@@ -61,11 +58,11 @@ public sealed partial class MainPage : Page
                                             .Margin(0, 16, 0, 0)
                                             .Children(
                                                 new TextBlock()
-                                                    .Text(_resourceLoader.GetString("counter_label"))
+                                                    .Text(x => x.Binding(() => vm.CounterLabel))
                                                     .HorizontalAlignment(HorizontalAlignment.Center)
                                                     .FontSize(32),
                                                 new TextBlock()
-                                                    .Text((x) => x.Binding(() => vm.Counter.Result))
+                                                    .Text(x => x.Binding(() => vm.Counter.Result))
                                                     .FontSize(64)
                                                     .HorizontalAlignment(
                                                         HorizontalAlignment.Center
@@ -86,14 +83,12 @@ public sealed partial class MainPage : Page
         );
     }
 
-    private StackPanel LanguageSwitcher()
+    private StackPanel LanguageSwitcher(MainViewModel vm)
     {
         var toggle = new ToggleSwitch()
             .OffContent("EN")
-            .OnContent("PL");
-
-        // Set initial state without triggering event
-        toggle.IsOn = _languageService.CurrentLanguage == "pl";
+            .OnContent("PL")
+            .IsOn(x => x.Binding(() => vm.CurrentLanguage).Convert(lang => lang == "pl"));
 
         toggle.Toggled += (sender, args) =>
         {
@@ -101,11 +96,6 @@ public sealed partial class MainPage : Page
             {
                 var newLang = ts.IsOn ? "pl" : "en";
                 _languageService.SetLanguage(newLang);
-                // Refresh page to apply new language
-                if (this.Frame is Frame frame)
-                {
-                    frame.Navigate(typeof(MainPage));
-                }
             }
         };
 
@@ -115,7 +105,7 @@ public sealed partial class MainPage : Page
             .Spacing(8)
             .Children(
                 new TextBlock()
-                    .Text(_resourceLoader.GetString("language_label"))
+                    .Text(x => x.Binding(() => vm.LanguageLabel))
                     .VerticalAlignment(VerticalAlignment.Center)
                     .FontSize(16),
                 toggle
@@ -152,7 +142,7 @@ public sealed partial class MainPage : Page
             .CommandParameter(CounterOperation.Subtract);
 
     private Button ClearCountButton(MainViewModel vm) =>
-        ActionButton(_resourceLoader.GetString("common_clear"))
+        ActionButton(x => x.Binding(() => vm.ClearButtonLabel))
             .Command(() => vm.InputCommand)
             .CommandParameter(CounterOperation.Clear);
 }
