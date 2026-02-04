@@ -15,10 +15,11 @@ public partial record MainModel
 
     public IState<string> CurrentLanguage { get; }
 
+    public IFeed<string> Translation(string key) => CurrentLanguage.Select(_ => LanguageService.GetString(key));
+
     // Localized strings as reactive feeds
     public IFeed<string> AppTitle => CurrentLanguage.Select(_ => LanguageService["common_app_title"]);
     public IFeed<string> StepSettingsLabel => CurrentLanguage.Select(_ => LanguageService["step_settings"]);
-    public IFeed<string> CounterLabel => CurrentLanguage.Select(_ => LanguageService["counter_label"]);
     public IFeed<string> ClearButtonLabel => CurrentLanguage.Select(_ => LanguageService["common_clear"]);
     public IFeed<string> LanguageLabel => CurrentLanguage.Select(_ => LanguageService["language_label"]);
 

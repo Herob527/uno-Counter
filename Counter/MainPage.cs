@@ -1,6 +1,7 @@
 using Counter.Enums;
 using Counter.Services;
 using Microsoft.UI.Text;
+using Microsoft.Windows.ApplicationModel.Resources;
 using Uno.Extensions.Markup;
 using Uno.Material;
 using Uno.Themes.Markup;
@@ -58,7 +59,8 @@ public sealed partial class MainPage : Page
                                             .Margin(0, 16, 0, 0)
                                             .Children(
                                                 new TextBlock()
-                                                    .Text(x => x.Binding(() => vm.CounterLabel))
+
+                                                    .Text(x => x.Binding(() => vm.CurrentLanguage).Convert(lang => lang))
                                                     .HorizontalAlignment(HorizontalAlignment.Center)
                                                     .FontSize(32),
                                                 new TextBlock()
