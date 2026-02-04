@@ -26,7 +26,6 @@ public sealed partial class MainPage : Page
                                     .HorizontalAlignment(HorizontalAlignment.Center)
                                     .Orientation(Orientation.Vertical)
                                     .Children(
-
                                         new TextBlock()
                                             .Text("Licznik app")
                                             .HorizontalAlignment(HorizontalAlignment.Center)
@@ -51,26 +50,28 @@ public sealed partial class MainPage : Page
                                         new StackPanel()
                                             .Orientation(Orientation.Vertical)
                                             .HorizontalAlignment(HorizontalAlignment.Center)
+                                            .Margin(0, 16, 0,0)
                                             .Children(
-
-                                        new TextBlock()
-                                            .Text("Licznik")
-                                            .HorizontalAlignment(HorizontalAlignment.Center)
-                                            .FontSize(32),
-                                        new TextBlock()
-                                            .Text((x) => x.Binding(() => vm.Counter.Result))
-                                            .FontSize(64)
-                                            .HorizontalAlignment(HorizontalAlignment.Center),
-                                        new StackPanel()
-                                            .Orientation(Orientation.Horizontal)
-                                            .Spacing(16)
-                                            .HorizontalAlignment(HorizontalAlignment.Center)
-                                            .Children(
-                                                AddCountButton(vm),
-                                                SubtractCountButton(vm),
-                                                ClearCountButton(vm)
+                                                new TextBlock()
+                                                    .Text("Licznik")
+                                                    .HorizontalAlignment(HorizontalAlignment.Center)
+                                                    .FontSize(32),
+                                                new TextBlock()
+                                                    .Text((x) => x.Binding(() => vm.Counter.Result))
+                                                    .FontSize(64)
+                                                    .HorizontalAlignment(
+                                                        HorizontalAlignment.Center
+                                                    ),
+                                                new StackPanel()
+                                                    .Orientation(Orientation.Horizontal)
+                                                    .Spacing(16)
+                                                    .HorizontalAlignment(HorizontalAlignment.Center)
+                                                    .Children(
+                                                        AddCountButton(vm),
+                                                        SubtractCountButton(vm),
+                                                        ClearCountButton(vm)
+                                                    )
                                             )
-                                        )
                                     )
                             )
                     )
@@ -107,7 +108,7 @@ public sealed partial class MainPage : Page
             .CommandParameter(CounterOperation.Subtract);
 
     private Button ClearCountButton(MainViewModel vm) =>
-        ActionButton("Clear")
+        ActionButton("Wyczyść")
             .Command(() => vm.InputCommand)
             .CommandParameter(CounterOperation.Clear);
 }
