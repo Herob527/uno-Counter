@@ -1,7 +1,6 @@
 using Counter.Enums;
 using Counter.Services;
 using Microsoft.UI.Text;
-using Microsoft.Windows.ApplicationModel.Resources;
 using Uno.Extensions.Markup;
 using Uno.Material;
 using Uno.Themes.Markup;
@@ -16,6 +15,7 @@ public sealed partial class MainPage : Page
     public MainPage()
     {
         _languageService = new LanguageService();
+        BindingExtensions.Initialize(_languageService);
 
         this.DataContext(
             new MainViewModel(this.GetThemeService(), _languageService),
@@ -59,10 +59,7 @@ public sealed partial class MainPage : Page
                                             .Margin(0, 16, 0, 0)
                                             .Children(
                                                 new TextBlock()
-                                                    .Text(x => x
-                                                        .Binding(() => vm.CurrentLanguage)
-                                                        .Convert(_ => new ResourceLoader().GetString("counter_label"))
-                                                    )
+                                                    .Text(x => x.Localized("counter_label"))
                                                     .HorizontalAlignment(HorizontalAlignment.Center)
                                                     .FontSize(32),
                                                 new TextBlock()
