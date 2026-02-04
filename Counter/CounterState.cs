@@ -5,13 +5,13 @@ namespace Counter;
 public record CounterState
 {
     private int Count { get; init; }
-    private int Step { get; init; } = 1;
 
     private CounterState Increment() => this with { Count = Count + Step };
     private CounterState Decrement() => this with { Count = Count - Step };
     private CounterState Clear() => this with { Count = 0 };
 
     public string Result => $"{Count}";
+    public int Step { get; set; } = 1;
 
     public string CounterStatus => Count switch
     {
@@ -20,17 +20,13 @@ public record CounterState
         _ => "Zero"
     };
 
-    public CounterState Input(CounterOperation operation)
+    public CounterState Input(CounterOperation operation) => operation switch
     {
-        Console.WriteLine($"Input: {operation}");
-        return operation switch
-        {
-            CounterOperation.Add => Increment(),
-            CounterOperation.Subtract => Decrement(),
-            CounterOperation.Clear => Clear(),
-            _ => this
-        };
-    }
+        CounterOperation.Add => Increment(),
+        CounterOperation.Subtract => Decrement(),
+        CounterOperation.Clear => Clear(),
+        _ => this
+    };
 
     public CounterState ChangeStep(int step) => this with { Step = step };
 }

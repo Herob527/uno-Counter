@@ -20,24 +20,34 @@ public sealed partial class MainPage : Page
                 .Child(
                     new Grid()
                         .RowSpacing(16)
-                        .ColumnDefinitions<Grid>("*,*,*")
-                        .RowDefinitions<Grid>("*,*,*,*,*,*")
+                        .ColumnDefinitions("*,*,*,*,*")
+                        .RowDefinitions("*,*,*,*,*,*")
                         .Padding(16)
+                        .ColumnSpacing(16)
                         .Children(
-
+                            AddStep(vm)
+                                .Grid(column: 1, row: 1),
                             new TextBlock()
-                                .Text((x) => x.Binding(() => vm.CounterStatus))
+                                .Text(x => x.Binding(() => vm.Counter.Step))
                                 .HorizontalAlignment(HorizontalAlignment.Center)
                                 .VerticalAlignment(VerticalAlignment.Center)
-                                .FontSize(64).Grid(column: 1, row: 0),
+                                .Grid(column: 2, row: 1)
+                                .FontSize(64),
+                            SubtractStep(vm)
+                                .Grid(column: 3, row: 1)
+                            ,
                             new TextBlock()
                                 .Text((x) => x.Binding(() => vm.Counter.Result))
                                 .HorizontalAlignment(HorizontalAlignment.Center)
                                 .VerticalAlignment(VerticalAlignment.Center)
-                                .FontSize(64).Grid(column: 0, row: 0),
-                            AddButton(vm).Grid(row: 1),
-                            SubtractButton(vm).Grid(row: 2),
-                            ClearButton(vm).Grid(row: 3)
+                                .FontSize(64)
+                                .Grid(column: 2, row: 3),
+                            AddCountButton(vm)
+                                .Grid(column: 1, row: 4),
+                            SubtractCountButton(vm)
+                                .Grid(column: 2, row: 4),
+                            ClearCountButton(vm)
+                                .Grid(column: 3, row: 4)
                         )
 
                     )
@@ -45,25 +55,41 @@ public sealed partial class MainPage : Page
         );
     }
 
-    private Button ActionButton(string content) =>
-        new Button().Content(content)
+    private Button BaseButton() =>
+        new Button()
             .FontSize(32)
             .HorizontalAlignment(HorizontalAlignment.Stretch)
             .VerticalAlignment(VerticalAlignment.Stretch)
             .ControlExtensions(elevation: 0)
             .Style(Theme.Button.Styles.Elevated);
 
-    private Button AddButton(MainViewModel vm) =>
-        ActionButton("+")
+    private Button ActionButton(string content) =>
+        BaseButton()
+            .Content(content);
+
+    private Button ActionButton(Action<IDependencyPropertyBuilder<object>> configureBinding) =>
+        BaseButton()
+            .Content(x => configureBinding(x));
+
+    private Button AddStep(MainViewModel vm) => ActionButton("+1")
+        .Command(() => vm.IncrementStepCommand);
+
+    private Button SubtractStep(MainViewModel vm) => ActionButton("-1")
+        .Command(() => vm.DecrementStepCommand);
+
+    private Button AddCountButton(MainViewModel vm) =>
+        ActionButton(x => x.Binding(() => vm.Counter.Step)
+                           .Convert(step => $"+{step}"))
             .Command(() => vm.InputCommand)
             .CommandParameter(CounterOperation.Add);
 
-    private Button SubtractButton(MainViewModel vm) =>
-        ActionButton("-")
+    private Button SubtractCountButton(MainViewModel vm) =>
+        ActionButton(x => x.Binding(() => vm.Counter.Step)
+                           .Convert(step => $"-{step}"))
             .Command(() => vm.InputCommand)
             .CommandParameter(CounterOperation.Subtract);
 
-    private Button ClearButton(MainViewModel vm) =>
+    private Button ClearCountButton(MainViewModel vm) =>
         ActionButton("Clear")
             .Command(() => vm.InputCommand)
             .CommandParameter(CounterOperation.Clear);
