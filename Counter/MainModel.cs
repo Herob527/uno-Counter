@@ -1,14 +1,19 @@
 using Counter.Enums;
 using Counter.Records;
+using Counter.Services;
 using Uno;
 
 namespace Counter;
 
 public partial record MainModel
 {
+    public ILanguageService LanguageService { get; }
+
     public IState<bool> IsDark { get; }
 
     public IState<CounterState> Counter { get; }
+
+    public IState<string> CurrentLanguage { get; }
 
     public IFeed<string> CounterStatus => Counter.Select((state) => state.CounterStatus);
 
@@ -25,11 +30,17 @@ public partial record MainModel
                 _ => state?.ChangeStep(state.Step - 1),
             }
         , ct);
-    public MainModel(IThemeService themeService)
+
+
+    public MainModel(IThemeService themeService, ILanguageService languageService)
     {
         ArgumentNullException.ThrowIfNull(themeService);
+        ArgumentNullException.ThrowIfNull(languageService);
+
+        LanguageService = languageService;
         Counter = State.Value(this, () => new CounterState());
         IsDark = State.Value(this, () => themeService.IsDark);
+        CurrentLanguage = State.Value(this, () => languageService.CurrentLanguage);
 
         themeService.ThemeChanged += async (_, _) =>
         {

@@ -29,6 +29,6 @@
       UnoFeatures are used to quickly add and manage features enabled for your app.
       https://aka.platform.uno/singleproject-features
     -->
-    <UnoFeatures>CSharpMarkup; Material; Toolkit; MVUX; ExtensionsCore; SkiaRenderer;ThemeService;</UnoFeatures>
+    <UnoFeatures>CSharpMarkup; Material; Toolkit; MVUX; ExtensionsCore; SkiaRenderer;ThemeService;Localization</UnoFeatures>
   </PropertyGroup>
 </Project>

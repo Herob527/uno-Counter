@@ -1,19 +1,26 @@
 using Counter.Enums;
+using Counter.Services;
 using Microsoft.UI.Text;
 using Uno.Extensions.Markup;
 using Uno.Material;
 using Uno.Themes.Markup;
 using Uno.Toolkit.UI;
-using BrushBuilder = System.Action<Uno.Extensions.Markup.IDependencyPropertyBuilder<Microsoft.UI.Xaml.Media.Brush>>;
+using Windows.ApplicationModel.Resources;
 
 namespace Counter;
 
 public sealed partial class MainPage : Page
 {
+    private readonly ResourceLoader _resourceLoader;
+    private readonly ILanguageService _languageService;
+
     public MainPage()
     {
+        _resourceLoader = ResourceLoader.GetForViewIndependentUse();
+        _languageService = new LanguageService();
+
         this.DataContext(
-            new MainViewModel(this.GetThemeService()),
+            new MainViewModel(this.GetThemeService(), _languageService),
             (page, vm) =>
                 page.Background(Theme.Brushes.Background.Default)
                     .Content(
@@ -27,13 +34,14 @@ public sealed partial class MainPage : Page
                                     .Orientation(Orientation.Vertical)
                                     .Children(
                                         new TextBlock()
-                                            .Text("Licznik app")
+                                            .Text(_resourceLoader.GetString("common_app_title"))
                                             .HorizontalAlignment(HorizontalAlignment.Center)
                                             .FontSize(48)
                                             .FontWeight(FontWeights.Bold)
                                             .Margin(0, 32, 0, 32),
+                                        LanguageSwitcher(),
                                         new TextBlock()
-                                            .Text("Ustawienia kroku licznika")
+                                            .Text(_resourceLoader.GetString("step_settings"))
                                             .HorizontalAlignment(HorizontalAlignment.Center)
                                             .FontSize(32),
                                         new StackPanel()
@@ -50,10 +58,10 @@ public sealed partial class MainPage : Page
                                         new StackPanel()
                                             .Orientation(Orientation.Vertical)
                                             .HorizontalAlignment(HorizontalAlignment.Center)
-                                            .Margin(0, 16, 0,0)
+                                            .Margin(0, 16, 0, 0)
                                             .Children(
                                                 new TextBlock()
-                                                    .Text("Licznik")
+                                                    .Text(_resourceLoader.GetString("counter_label"))
                                                     .HorizontalAlignment(HorizontalAlignment.Center)
                                                     .FontSize(32),
                                                 new TextBlock()
@@ -76,6 +84,42 @@ public sealed partial class MainPage : Page
                             )
                     )
         );
+    }
+
+    private StackPanel LanguageSwitcher()
+    {
+        var toggle = new ToggleSwitch()
+            .OffContent("EN")
+            .OnContent("PL");
+
+        // Set initial state without triggering event
+        toggle.IsOn = _languageService.CurrentLanguage == "pl";
+
+        toggle.Toggled += (sender, args) =>
+        {
+            if (sender is ToggleSwitch ts)
+            {
+                var newLang = ts.IsOn ? "pl" : "en";
+                _languageService.SetLanguage(newLang);
+                // Refresh page to apply new language
+                if (this.Frame is Frame frame)
+                {
+                    frame.Navigate(typeof(MainPage));
+                }
+            }
+        };
+
+        return new StackPanel()
+            .Orientation(Orientation.Horizontal)
+            .HorizontalAlignment(HorizontalAlignment.Center)
+            .Spacing(8)
+            .Children(
+                new TextBlock()
+                    .Text(_resourceLoader.GetString("language_label"))
+                    .VerticalAlignment(VerticalAlignment.Center)
+                    .FontSize(16),
+                toggle
+            );
     }
 
     private Button BaseButton() =>
@@ -108,7 +152,7 @@ public sealed partial class MainPage : Page
             .CommandParameter(CounterOperation.Subtract);
 
     private Button ClearCountButton(MainViewModel vm) =>
-        ActionButton("Wyczyść")
+        ActionButton(_resourceLoader.GetString("common_clear"))
             .Command(() => vm.InputCommand)
             .CommandParameter(CounterOperation.Clear);
 }

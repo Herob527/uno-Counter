@@ -20,8 +20,11 @@ public partial class App : Application
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
         // Load WinUI Resources
-        Resources.Build(r => r.Merged(
-            new XamlControlsResources()));
+        var build = Resources.Build(r =>
+        {
+            r.Merged(
+                        new XamlControlsResources());
+        });
         MainWindow = new Window();
 #if DEBUG
         MainWindow.UseStudio();

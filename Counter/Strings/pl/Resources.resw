@@ -118,21 +118,21 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ApplicationName" xml:space="preserve">
-    <value>Counter</value>
+    <value>Licznik</value>
   </data>
   <data name="common_app_title" xml:space="preserve">
-    <value>Counter app</value>
+    <value>Licznik app</value>
   </data>
   <data name="common_clear" xml:space="preserve">
-    <value>Clear</value>
+    <value>Wyczyść</value>
   </data>
   <data name="step_settings" xml:space="preserve">
-    <value>Step settings</value>
+    <value>Ustawienia kroku licznika</value>
   </data>
   <data name="counter_label" xml:space="preserve">
-    <value>Counter</value>
+    <value>Licznik</value>
   </data>
   <data name="language_label" xml:space="preserve">
-    <value>Language</value>
+    <value>Język</value>
   </data>
 </root>
