@@ -59,8 +59,11 @@ public sealed partial class MainPage : Page
                                             .Margin(0, 16, 0, 0)
                                             .Children(
                                                 new TextBlock()
-
-                                                    .Text(x => x.Binding(() => vm.CurrentLanguage).Convert(lang => lang))
+                                                    .Text(x => x.Binding(() => vm.CurrentLanguage)
+                                                        .Convert(_ => new ResourceLoader()
+                                                                            .GetString("counter_label")
+                                                        )
+                                                    )
                                                     .HorizontalAlignment(HorizontalAlignment.Center)
                                                     .FontSize(32),
                                                 new TextBlock()
