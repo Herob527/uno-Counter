@@ -7,6 +7,8 @@ namespace Counter;
 
 public partial record MainModel
 {
+    private readonly ILanguageService _languageService;
+
     public IState<bool> IsDark { get; }
 
     public IState<CounterState> Counter { get; }
@@ -14,6 +16,8 @@ public partial record MainModel
     public IState<string> CurrentLanguage { get; }
 
     public IFeed<string> CounterStatus => Counter.Select((state) => state.CounterStatus);
+
+    public string GetString(string key) => _languageService.GetString(key);
 
     public ValueTask InputCommand(CounterOperation key, CancellationToken ct)
             => Counter.Update(state => state?.Input(key), ct);
@@ -34,6 +38,7 @@ public partial record MainModel
         ArgumentNullException.ThrowIfNull(themeService);
         ArgumentNullException.ThrowIfNull(languageService);
 
+        _languageService = languageService;
         Counter = State.Value(this, () => new CounterState());
         IsDark = State.Value(this, () => themeService.IsDark);
         CurrentLanguage = State.Value(this, () => languageService.CurrentLanguage);

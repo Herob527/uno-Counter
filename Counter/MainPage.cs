@@ -1,10 +1,9 @@
+using Counter.Components;
 using Counter.Enums;
 using Counter.Services;
-using Microsoft.UI.Text;
 using Uno.Extensions.Markup;
 using Uno.Material;
 using Uno.Themes.Markup;
-using Uno.Toolkit.UI;
 
 namespace Counter;
 
@@ -19,101 +18,50 @@ public sealed partial class MainPage : Page
             (page, vm) =>
                 page.Background(Theme.Brushes.Background.Default)
                     .Content(
-                        new Border()
-                            .Background(Theme.Brushes.Secondary.Container.Default)
-                            .SafeArea(SafeArea.InsetMask.VisibleBounds)
-                            .Child(
-                                new StackPanel()
-                                    .Spacing(16)
-                                    .HorizontalAlignment(HorizontalAlignment.Center)
-                                    .Orientation(Orientation.Vertical)
-                                    .Children(
-                                        new TextBlock()
-                                            .Text(x => x.Localized("common_app_title"))
-                                            .HorizontalAlignment(HorizontalAlignment.Center)
-                                            .FontSize(48)
-                                            .FontWeight(FontWeights.Bold)
-                                            .Margin(0, 32, 0, 32),
-                                        LanguageSwitcher(vm, languageService),
-                                        new TextBlock()
-                                            .Text(x => x.Localized("step_settings"))
-                                            .HorizontalAlignment(HorizontalAlignment.Center)
-                                            .FontSize(32),
-                                        new StackPanel()
-                                            .Orientation(Orientation.Horizontal)
-                                            .HorizontalAlignment(HorizontalAlignment.Center)
-                                            .Spacing(16)
-                                            .Children(
-                                                AddStep(vm),
-                                                new TextBlock()
-                                                    .Text(x => x.Binding(() => vm.Counter.Step))
-                                                    .FontSize(64),
-                                                SubtractStep(vm)
-                                            ),
-                                        new StackPanel()
-                                            .Orientation(Orientation.Vertical)
-                                            .HorizontalAlignment(HorizontalAlignment.Center)
-                                            .Margin(0, 16, 0, 0)
-                                            .Children(
-                                                new TextBlock()
-                                                    .Text(x => x.Localized("counter_label"))
-                                                    .HorizontalAlignment(HorizontalAlignment.Center)
-                                                    .FontSize(32),
-                                                new TextBlock()
-                                                    .Text(x => x.Binding(() => vm.Counter.Result))
-                                                    .FontSize(64)
-                                                    .HorizontalAlignment(
-                                                        HorizontalAlignment.Center
-                                                    ),
-                                                new StackPanel()
-                                                    .Orientation(Orientation.Horizontal)
-                                                    .Spacing(16)
-                                                    .HorizontalAlignment(HorizontalAlignment.Center)
-                                                    .Children(
-                                                        AddCountButton(vm),
-                                                        SubtractCountButton(vm),
-                                                        ClearCountButton(vm)
-                                                    )
-                                            )
-                                    )
-                            )
+                        BaseLayout.Create(
+                            page,
+                            languageService,
+                            new TextBlock()
+                                .Text(x => x.Localized("step_settings"))
+                                .HorizontalAlignment(HorizontalAlignment.Center)
+                                .FontSize(32),
+                            new StackPanel()
+                                .Orientation(Orientation.Horizontal)
+                                .HorizontalAlignment(HorizontalAlignment.Center)
+                                .Spacing(16)
+                                .Children(
+                                    AddStep(vm),
+                                    new TextBlock()
+                                        .Text(x => x.Binding(() => vm.Counter.Step))
+                                        .FontSize(64),
+                                    SubtractStep(vm)
+                                ),
+                            new StackPanel()
+                                .Orientation(Orientation.Vertical)
+                                .HorizontalAlignment(HorizontalAlignment.Center)
+                                .Margin(0, 16, 0, 0)
+                                .Children(
+                                    new TextBlock()
+                                        .Text(x => x.Localized("counter_label"))
+                                        .HorizontalAlignment(HorizontalAlignment.Center)
+                                        .FontSize(32),
+                                    new TextBlock()
+                                        .Text(x => x.Binding(() => vm.Counter.Result))
+                                        .FontSize(64)
+                                        .HorizontalAlignment(HorizontalAlignment.Center),
+                                    new StackPanel()
+                                        .Orientation(Orientation.Horizontal)
+                                        .Spacing(16)
+                                        .HorizontalAlignment(HorizontalAlignment.Center)
+                                        .Children(
+                                            AddCountButton(vm),
+                                            SubtractCountButton(vm),
+                                            ClearCountButton(vm)
+                                        )
+                                )
+                        )
                     )
         );
-    }
-
-    private StackPanel LanguageSwitcher(MainViewModel vm, ILanguageService languageService)
-    {
-        var languages = languageService.GetLanguages();
-        var menuFlyout = new MenuFlyout();
-        var dropdown = new DropDownButton()
-            .Content(languageService.CurrentLanguage.ToUpperInvariant())
-            .Flyout(menuFlyout);
-
-        foreach (var lang in languages)
-        {
-            var item = new MenuFlyoutItem() { Text = lang.ToUpperInvariant(), Tag = lang };
-            item.Click += (sender, args) =>
-            {
-                if (sender is MenuFlyoutItem menuItem && menuItem.Tag?.ToString() is string newLang)
-                {
-                    languageService.SetLanguage(newLang);
-                    dropdown.Content = newLang.ToUpperInvariant();
-                }
-            };
-            menuFlyout.Items.Add(item);
-        }
-
-        return new StackPanel()
-            .Orientation(Orientation.Horizontal)
-            .HorizontalAlignment(HorizontalAlignment.Center)
-            .Spacing(8)
-            .Children(
-                new TextBlock()
-                    .Text(x => x.Localized("language_label"))
-                    .VerticalAlignment(VerticalAlignment.Center)
-                    .FontSize(16),
-                dropdown
-            );
     }
 
     private Button BaseButton() =>

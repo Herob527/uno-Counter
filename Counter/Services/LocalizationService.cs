@@ -60,7 +60,6 @@ public class LanguageService : ILanguageService
             _resourceLoader = new ResourceLoader();
         }
 
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentLanguage)));
         LanguageChanged?.Invoke(languageCode);
     }
