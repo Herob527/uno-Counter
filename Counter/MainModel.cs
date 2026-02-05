@@ -49,8 +49,6 @@ public partial record MainModel
             => await themeService.SetThemeAsync(dark ? AppTheme.Dark : AppTheme.Light));
 
         languageService.LanguageChanged += async (newLang) =>
-        {
             await CurrentLanguage.Update(_ => newLang, CancellationToken.None);
-        };
     }
 }
