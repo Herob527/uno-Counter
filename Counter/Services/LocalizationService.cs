@@ -16,6 +16,7 @@ public class LanguageService : ILanguageService
 {
     private string _currentLanguage;
     private ResourceLoader _resourceLoader;
+    private readonly object _lock = new();
 
     public event PropertyChangedEventHandler? PropertyChanged;
     public event Action<string>? LanguageChanged;
@@ -33,8 +34,11 @@ public class LanguageService : ILanguageService
 
     public string GetString(string key)
     {
-        var value = _resourceLoader.GetString(key);
-        return string.IsNullOrEmpty(value) ? key : value;
+        lock (_lock)
+        {
+            var value = _resourceLoader.GetString(key);
+            return string.IsNullOrEmpty(value) ? key : value;
+        }
     }
 
     public void SetLanguage(string languageCode)
@@ -42,11 +46,14 @@ public class LanguageService : ILanguageService
         if (_currentLanguage == languageCode)
             return;
 
-        _currentLanguage = languageCode;
-        Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = languageCode;
+        lock (_lock)
+        {
+            _currentLanguage = languageCode;
+            Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = languageCode;
 
-        // Recreate ResourceLoader to pick up the new language
-        _resourceLoader = new ResourceLoader();
+            // Recreate ResourceLoader to pick up the new language
+            _resourceLoader = new ResourceLoader();
+        }
 
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentLanguage)));
