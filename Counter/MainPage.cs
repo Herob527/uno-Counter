@@ -10,15 +10,12 @@ namespace Counter;
 
 public sealed partial class MainPage : Page
 {
-    private readonly ILanguageService _languageService;
-
     public MainPage()
     {
-        _languageService = new LanguageService();
-        BindingExtensions.Initialize(_languageService);
+        var languageService = BindingExtensions.LanguageService;
 
         this.DataContext(
-            new MainViewModel(this.GetThemeService(), _languageService),
+            new MainViewModel(this.GetThemeService(), languageService),
             (page, vm) =>
                 page.Background(Theme.Brushes.Background.Default)
                     .Content(
@@ -37,7 +34,7 @@ public sealed partial class MainPage : Page
                                             .FontSize(48)
                                             .FontWeight(FontWeights.Bold)
                                             .Margin(0, 32, 0, 32),
-                                        LanguageSwitcher(vm),
+                                        LanguageSwitcher(vm, languageService),
                                         new TextBlock()
                                             .Text(x => x.Localized("step_settings"))
                                             .HorizontalAlignment(HorizontalAlignment.Center)
@@ -84,12 +81,12 @@ public sealed partial class MainPage : Page
         );
     }
 
-    private StackPanel LanguageSwitcher(MainViewModel vm)
+    private StackPanel LanguageSwitcher(MainViewModel vm, ILanguageService languageService)
     {
-        var languages = _languageService.GetLanguages();
+        var languages = languageService.GetLanguages();
         var menuFlyout = new MenuFlyout();
         var dropdown = new DropDownButton()
-            .Content(_languageService.CurrentLanguage.ToUpperInvariant())
+            .Content(languageService.CurrentLanguage.ToUpperInvariant())
             .Flyout(menuFlyout);
 
         foreach (var lang in languages)
@@ -99,7 +96,7 @@ public sealed partial class MainPage : Page
             {
                 if (sender is MenuFlyoutItem menuItem && menuItem.Tag?.ToString() is string newLang)
                 {
-                    _languageService.SetLanguage(newLang);
+                    languageService.SetLanguage(newLang);
                     dropdown.Content = newLang.ToUpperInvariant();
                 }
             };
