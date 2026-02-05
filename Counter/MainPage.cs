@@ -86,19 +86,25 @@ public sealed partial class MainPage : Page
 
     private StackPanel LanguageSwitcher(MainViewModel vm)
     {
-        var toggle = new ToggleSwitch()
-            .OffContent("EN")
-            .OnContent("PL")
-            .IsOn(x => x.Binding(() => vm.CurrentLanguage).Convert(lang => lang == "pl"));
+        var languages = _languageService.GetLanguages();
+        var menuFlyout = new MenuFlyout();
+        var dropdown = new DropDownButton()
+            .Content(_languageService.CurrentLanguage.ToUpperInvariant())
+            .Flyout(menuFlyout);
 
-        toggle.Toggled += (sender, args) =>
+        foreach (var lang in languages)
         {
-            if (sender is ToggleSwitch ts)
+            var item = new MenuFlyoutItem() { Text = lang.ToUpperInvariant(), Tag = lang };
+            item.Click += (sender, args) =>
             {
-                var newLang = ts.IsOn ? "pl" : "en";
-                _languageService.SetLanguage(newLang);
-            }
-        };
+                if (sender is MenuFlyoutItem menuItem && menuItem.Tag?.ToString() is string newLang)
+                {
+                    _languageService.SetLanguage(newLang);
+                    dropdown.Content = newLang.ToUpperInvariant();
+                }
+            };
+            menuFlyout.Items.Add(item);
+        }
 
         return new StackPanel()
             .Orientation(Orientation.Horizontal)
@@ -109,7 +115,7 @@ public sealed partial class MainPage : Page
                     .Text(x => x.Localized("language_label"))
                     .VerticalAlignment(VerticalAlignment.Center)
                     .FontSize(16),
-                toggle
+                dropdown
             );
     }
 

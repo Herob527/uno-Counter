@@ -9,6 +9,7 @@ public interface ILanguageService : INotifyPropertyChanged
     string this[string key] { get; }
     void SetLanguage(string languageCode);
     string GetString(string key);
+    string[] GetLanguages();
     event Action<string>? LanguageChanged;
 }
 
@@ -24,7 +25,7 @@ public class LanguageService : ILanguageService
     public LanguageService()
     {
         var savedLanguage = Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride;
-        _currentLanguage = string.IsNullOrEmpty(savedLanguage) ? "en" : savedLanguage;
+        _currentLanguage = string.IsNullOrEmpty(savedLanguage) ? SupportedLanguages[0] : savedLanguage;
         _resourceLoader = new ResourceLoader();
     }
 
@@ -40,6 +41,10 @@ public class LanguageService : ILanguageService
             return string.IsNullOrEmpty(value) ? key : value;
         }
     }
+
+    private static readonly string[] SupportedLanguages = ["en", "pl"];
+
+    public string[] GetLanguages() => SupportedLanguages;
 
     public void SetLanguage(string languageCode)
     {
