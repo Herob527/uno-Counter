@@ -23,4 +23,16 @@ public static class BindingExtensions
             .Binding(() => _localization.CurrentLanguage)
             .Convert(_ => _localization.Model.GetString(resourceKey));
     }
+
+    public static BindingBuilder<string, object> Localized(
+        this IDependencyPropertyBuilder<object> builder,
+        string resourceKey)
+    {
+        if (_localization is null)
+            throw new InvalidOperationException("Call BindingExtensions.Initialize() first");
+
+        return builder
+            .Binding(() => _localization.CurrentLanguage)
+            .Convert(_ => _localization.Model.GetString(resourceKey));
+    }
 }
