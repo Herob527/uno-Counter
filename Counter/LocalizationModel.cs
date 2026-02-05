@@ -13,10 +13,7 @@ public partial record LocalizationModel
         _languageService = languageService;
         CurrentLanguage = State.Value(this, () => languageService.CurrentLanguage);
 
-        languageService.LanguageChanged += async (newLang) =>
-        {
-            await CurrentLanguage.Update(_ => newLang, CancellationToken.None);
-        };
+        languageService.LanguageChanged += async (newLang) => await CurrentLanguage.Update(_ => newLang, CancellationToken.None);
     }
 
     public string GetString(string key) => _languageService.GetString(key);
