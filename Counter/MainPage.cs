@@ -32,14 +32,14 @@ public sealed partial class MainPage : Page
                                     .Orientation(Orientation.Vertical)
                                     .Children(
                                         new TextBlock()
-                                            .Text(x => x.Binding(() => vm.AppTitle))
+                                            .Text(x => x.Localized("common_app_title"))
                                             .HorizontalAlignment(HorizontalAlignment.Center)
                                             .FontSize(48)
                                             .FontWeight(FontWeights.Bold)
                                             .Margin(0, 32, 0, 32),
                                         LanguageSwitcher(vm),
                                         new TextBlock()
-                                            .Text(x => x.Binding(() => vm.StepSettingsLabel))
+                                            .Text(x => x.Localized("step_settings"))
                                             .HorizontalAlignment(HorizontalAlignment.Center)
                                             .FontSize(32),
                                         new StackPanel()
@@ -106,7 +106,7 @@ public sealed partial class MainPage : Page
             .Spacing(8)
             .Children(
                 new TextBlock()
-                    .Text(x => x.Binding(() => vm.LanguageLabel))
+                    .Text(x => x.Localized("language_label"))
                     .VerticalAlignment(VerticalAlignment.Center)
                     .FontSize(16),
                 toggle
@@ -143,7 +143,7 @@ public sealed partial class MainPage : Page
             .CommandParameter(CounterOperation.Subtract);
 
     private Button ClearCountButton(MainViewModel vm) =>
-        ActionButton(x => x.Binding(() => vm.ClearButtonLabel))
+        ActionButton(x => x.Localized("common_clear"))
             .Command(() => vm.InputCommand)
             .CommandParameter(CounterOperation.Clear);
 }
