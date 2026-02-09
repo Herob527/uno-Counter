@@ -17,7 +17,7 @@ public class LanguageService : ILanguageService
 {
     private string _currentLanguage;
     private ResourceLoader _resourceLoader;
-    private readonly object _lock = new();
+    private readonly Lock _lock = new();
 
     public event PropertyChangedEventHandler? PropertyChanged;
     public event Action<string>? LanguageChanged;
