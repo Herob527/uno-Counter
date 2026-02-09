@@ -43,7 +43,7 @@ public static class BaseLayout
     private static Button NavigationButton(Page page)
     {
         var button = new Button()
-            .Content("Next Page")
+            .Content((x) => x.Localized("next_page"))
             .HorizontalAlignment(HorizontalAlignment.Center)
             .Style(Theme.Button.Styles.Outlined);
 
