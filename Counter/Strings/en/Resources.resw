@@ -135,4 +135,7 @@
   <data name="language_label" xml:space="preserve">
     <value>Language</value>
   </data>
+  <data name="next_page" xml:space="preserve">
+    <value>Next page</value>
+  </data>
 </root>
